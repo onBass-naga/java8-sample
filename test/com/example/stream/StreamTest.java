@@ -7,9 +7,7 @@ import com.example.Person;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
@@ -23,13 +21,13 @@ public class StreamTest {
     @BeforeClass
     public static void init() {
         persons = Arrays.asList(
-                new Person("Jhone", 23, Gender.MALE, BloodType.A)
+                new Person("John", 23, Gender.MALE, BloodType.A)
                 , new Person("Ai", 17, Gender.FEMALE, BloodType.O)
-                , new Person("Jhone", 26, Gender.MALE, BloodType.AB)
-                , new Person("Jhone", 33, Gender.MALE, BloodType.B)
-                , new Person("Jhone", 19, Gender.MALE, BloodType.A)
-                , new Person("Jhone", 24, Gender.MALE, BloodType.O)
-                , new Person("Jhone", 30, Gender.MALE, BloodType.B)
+                , new Person("Vin", 26, Gender.MALE, BloodType.AB)
+                , new Person("Jack", 33, Gender.MALE, BloodType.B)
+                , new Person("Steve", 19, Gender.MALE, BloodType.A)
+                , new Person("Jessica", 24, Gender.FEMALE, BloodType.O)
+                , new Person("Julia", 30, Gender.FEMALE, BloodType.B)
         );
     }
 
@@ -82,6 +80,39 @@ public class StreamTest {
                 .collect(Collectors.toList());
 
         System.out.println(anonymouses);
+    }
+
+    @Test
+    public void 年代別に人数を集計() {
+
+        Map<String, List<Person>> grouped = persons.stream()
+                .collect(Collectors.groupingBy(
+                        person -> (person.age / 10) * 10 + "代"));
+
+        System.out.println(grouped);
+
+
+        Map<String, Integer> counted = grouped.entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        entry -> entry.getKey(), entry -> entry.getValue().size()));
+
+        System.out.println(new TreeMap<>(counted));
+
+    }
+
+    @Test
+    public void 年代別に人数を集計2() {
+
+        Map<String, Integer> counted = persons.stream()
+                .collect(Collectors.groupingBy(
+                        person -> (person.age / 10) * 10 + "代"))
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        entry -> entry.getKey(), entry -> entry.getValue().size()));
+
+        System.out.println(new TreeMap<>(counted));
     }
 
 }

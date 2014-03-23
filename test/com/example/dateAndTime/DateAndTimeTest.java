@@ -41,32 +41,32 @@ public class DateAndTimeTest {
     }
 
     @Test
-    public void LocalDate_日付文字列をパースする_存在しない日付() {
+    public void LocalDate_日付文字列をパースする_存在しない日付は適当に解釈される() {
         LocalDate date = LocalDate.parse("2007/09/31", DateTimeFormatter.ofPattern("yyyy/MM/dd"));
         System.out.print(date);
     }
 
     @Test
-    public void LocalDateTime_日付文字列をパースする_存在しない日時() {
-        LocalDateTime date = LocalDateTime.parse("2007/09/31 23:00:02", DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+    public void LocalDateTime_日付文字列をパースする_時間が範囲外だと例外となる() {
+
+        exception.expect(DateTimeParseException.class);
+
+        LocalDateTime date = LocalDateTime.parse("2007/09/30 24:00:02", DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
         System.out.print(date);
     }
 
     @Test
-    public void LocalDateTime_日付文字列をパースする_存在しない日時2() {
+    public void LocalDateTime_日付文字列をパースする_存在しない日時の場合に例外とする() {
+
+        exception.expect(DateTimeParseException.class);
+
         LocalDate date = LocalDate.parse("2007/09/31", DateTimeFormatter.ofPattern("yyyy/MM/dd").withResolverStyle(ResolverStyle.STRICT));
         System.out.print(date);
     }
+
     @Test
-    public void LocalDateTime_日付文字列をパースする_存在しない日時3() {
-//        LocalDate date = LocalDate.parse("2014/03/10", DateTimeFormatter.ofPattern("yyyy/MM/dd").withResolverStyle(ResolverStyle.STRICT));
+    public void LocalDateTime_日付文字列をパースする_存在しない日時の場合に例外とするがフォーマットは厳密にチェックしない() {
         LocalDate date = LocalDate.parse("2007/9/001", DateTimeFormatter.ofPattern("uuuu/M/d").withResolverStyle(ResolverStyle.STRICT));
-        System.out.print(date);
-    }
-    @Test
-    public void LocalDateTime_日付文字列をパースする_存在しない日時4() {
-        LocalDate date = LocalDate.parse("2014/03/10", DateTimeFormatter.ofPattern("yyyy/MM/dd").withResolverStyle(ResolverStyle.STRICT));
-//        LocalDateTime date = LocalDateTime.parse("2007/09/31 23:00:02", DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
         System.out.print(date);
     }
 
