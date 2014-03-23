@@ -65,7 +65,7 @@ public class FunctionTest {
     };
 
     @Test
-    public void MapでFanctionを使う() {
+    public void MapでFunctionを使う() {
 
         Map<Integer, String> map = new HashMap<>();
         map.put(1, "hoge");
