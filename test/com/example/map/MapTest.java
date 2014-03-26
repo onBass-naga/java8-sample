@@ -6,8 +6,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -37,9 +36,11 @@ public class MapTest {
     public void 要素が存在する場合のみ処理を行う() {
         map.computeIfPresent(2, (key, val) -> "[" + val + key + "]" );
         assertThat(map.get(2), is("[fuga2]"));
+        assertThat(map.size(), is(2));
 
-        // ぬるぽが発生しない。
         map.computeIfPresent(7, (key, val) -> "[" + val + key + "]");
+        assertThat(map.get(7), is(nullValue()));
+        assertThat(map.size(), is(2));
 
         dump(map);
     }
@@ -68,11 +69,16 @@ public class MapTest {
         map.compute(7, (k, v) -> (v != null) ? "ある" : "ない");
         assertThat(map.get(7), is("ない"));
 
+        map.put(9, null);
+        int mapSizeBeforeCompute = map.size();
+        map.compute(9, (k, v) -> null);
+        assertThat(map.size(), is(not(mapSizeBeforeCompute)));
+
         dump(map);
     }
 
     @Test
-    public void Keyが存在しない時のみ要素を追加する() {
+    public void 指定したkeyでgetしてNULLの場合のみ要素を追加する() {
 
         map.putIfAbsent(3, "ugya");
         assertThat(map.size(), is(3));
@@ -80,6 +86,24 @@ public class MapTest {
         map.putIfAbsent(3, "ugyaaaa!!");
         assertThat(map.size(), is(3));
         assertThat(map.get(3), is("ugya"));
+
+        map.put(3, null);
+        map.putIfAbsent(3, "ugyaaaa!!");
+        assertThat(map.size(), is(3));
+        assertThat(map.get(3), is("ugyaaaa!!"));
+
+        dump(map);
+    }
+
+    @Test
+    public void 指定したkeyでgetしてNULLの場合のみ任意の処理を行う() {
+
+        map.computeIfAbsent(3, k -> k + ":default");
+        assertThat(map.get(3), is("3:default"));
+
+        map.put(3, null);
+        map.computeIfAbsent(3, k -> k + ":default");
+        assertThat(map.get(3), is("3:default"));
 
         dump(map);
     }
@@ -111,6 +135,17 @@ public class MapTest {
     }
 
     @Test
+    public void 全ての要素の値を任意の値に置き換える() {
+
+        map.replaceAll((k, v) -> "ばよえ〜ん");
+
+        assertThat(map.get(1), is("ばよえ〜ん"));
+        assertThat(map.get(2), is("ばよえ〜ん"));
+
+        dump(map);
+    }
+
+    @Test
     public void 要素が存在して指定した値と一致した場合に任意の値と置き換える() {
 
         map.replace(1, "hogee", "Hyyahaaah!!");
@@ -130,6 +165,7 @@ public class MapTest {
         assertThat(map.get(1), is("Hyyahaaah!!"));
 
         map.replace(7, "Hyyahaaah!!");
+        assertThat(map.get(7), is(nullValue()));
         dump(map);
     }
 
