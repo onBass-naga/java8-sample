@@ -1,10 +1,14 @@
 package com.example.map;
 
+import com.example.BloodType;
+import com.example.Gender;
+import com.example.Person;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
@@ -184,4 +188,41 @@ public class MapTest {
 
         dump(map);
     }
+
+    @Test
+    public void 要素が存在しなかった場合にデフォルト値を返却する_Optional() {
+
+        Map<Integer, Optional<Cat>> cats = new HashMap<>();
+        cats.put(1, Optional.of(new Cat("Mike")));
+        cats.put(2, Optional.of(new Cat("Kuro")));
+        cats.put(3, Optional.empty());
+
+        Optional<Cat> defaultCat = Optional.of(new Cat("Nora"));
+
+        Optional storedVal = cats.getOrDefault(1, defaultCat);
+        assertThat(storedVal, is(not(defaultCat)));
+
+        Optional storedVal2 = cats.getOrDefault(3, defaultCat);
+        assertThat(storedVal2, is(not(defaultCat)));
+
+        Optional defaultVal = cats.getOrDefault(7, defaultCat);
+        assertThat(defaultVal, is(defaultCat));
+        dump(cats);
+    }
+
+    static class Cat {
+        String name;
+        public Cat(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+
 }
